@@ -7,6 +7,7 @@ class Config:
     DEVELOPMENT = False
     SECRET_KEY = os.environ['SECRET_KEY']
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    CORS_HEADERS = 'Content-Type'
 
 
 class ProductionConfig(Config):

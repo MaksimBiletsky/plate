@@ -6,28 +6,23 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from services.db import db
 from models import User, GaleryPhoto
-from flask_cors import CORS, cross_origin
+from flask_cors import cross_origin
 
 
 views = Blueprint('views', __name__, static_folder="client/dist", static_url_path='')
 
-CORS(views)
-CORS(views, resources={r'/*': {'origins': '*'}},CORS_SUPPORTS_CREDENTIALS = True)
-views.config['CORS_HEADERS'] = 'Content-Type'
-
-
-@views.route('/api')
-@cross_origin
+@views.route('/')
+@cross_origin()
 def index():
     return 'Start page!'
 
-@views.route('/api/user')
-@cross_origin
+@views.route('/user')
+@cross_origin()
 def user():
     pass
 
-@views.route('/api/signup', methods=['POST'])
-@cross_origin
+@views.route('/signup', methods=['POST'])
+@cross_origin()
 def signup():
     email = request.args.get('email')
     name = request.args.get('name')
@@ -40,8 +35,8 @@ def signup():
  
     return jsonify({'success': 'Succesfully signed up!'})
 
-@views.route('/api/login', methods=['POST'])
-@cross_origin
+@views.route('/login', methods=['POST'])
+@cross_origin()
 def login():
     email = request.args.get('email')
     password = request.args.get('password')
@@ -53,22 +48,20 @@ def login():
     login_user(user)
     return jsonify({'success': 'Succesfully loged in!'})
 
-@views.route('/api/logout')
-@cross_origin
+@views.route('/logout')
+@cross_origin()
 def logout():
     logout_user()
     return jsonify({'success': 'Succesfully loged out!'})
 
 
-@views.route('/api/transfer')
+@views.route('/transfer')
+@cross_origin()
 def style():
     pass
 
-@views.route('/api/gallery')
+@views.route('/gallery')
+@cross_origin()
 @login_required
 def gallery():
     pass
-
-@views.route('/')
-def serve():
-    return send_from_directory(views.static_folder, 'index.html')
