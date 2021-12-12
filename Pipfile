@@ -12,6 +12,7 @@ gunicorn = "*"
 flask-script = "*"
 flask-migrate = "==2.5.2"
 flask-login = "*"
+flask-cors = "*"
 
 [dev-packages]
 

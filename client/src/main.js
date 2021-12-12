@@ -1,10 +1,8 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
+import router from './router'
+
 import App from './App.vue'
+createApp(App).use(router).mount('#app')
 
-Vue.config.productionTip = false
 
-require("./assets/main.scss")
-
-new Vue({
-  render: h => h(App),
-}).$mount('#app')
+require('@/assets/main.scss');

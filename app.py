@@ -8,15 +8,16 @@ from models import User
 from flask_login import LoginManager
 
 
-
-
 import os
 
 app = Flask(__name__)
+
 env_config = os.getenv("APP_SETTINGS", "config.DevelopmentConfig")
 app.config.from_object(env_config)
+
 db.init_app(app)
 migrate = Migrate(app, db)
+
 app.register_blueprint(views)
 
 login_manager = LoginManager()
