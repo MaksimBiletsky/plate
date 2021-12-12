@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_from_directory
 from flask_login import login_required, current_user, login_user, logout_user
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,7 +9,7 @@ from models import User, GaleryPhoto
 from flask_cors import CORS, cross_origin
 
 
-views = Blueprint('views', __name__)
+views = Blueprint('views', __name__, static_folder="client/dist", static_url_path='')
 
 CORS(views)
 CORS(views, resources={r'/*': {'origins': '*'}},CORS_SUPPORTS_CREDENTIALS = True)
@@ -71,4 +71,4 @@ def gallery():
 
 @views.route('/')
 def serve():
-    pass
+    return send_from_directory(views.static_folder, 'index.html')
