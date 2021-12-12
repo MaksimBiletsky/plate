@@ -8,6 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+
 build/
 develop-eggs/
 
@@ -147,8 +148,8 @@ cython_debug/
 test.gif
 
 .DS_Store
-client/node_modules
-/dist
+node_modules
+
 
 
 # local env files
