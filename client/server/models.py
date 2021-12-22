@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_login import UserMixin
-from services.db import db
+from .services.db import db
 
 class GaleryPhoto(db.Model):
     __tablename__ = 'galery_photo'

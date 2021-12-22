@@ -169,3 +169,4 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+/client_old

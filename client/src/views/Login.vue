@@ -76,7 +76,7 @@ export default {
         if(is_sign_up) {}
     },
     backToValue() {
-      console.log(process.env.VUE_APP_SERVER_BASE_URL);
+      console.log(process.env);
       if (this.is_sign_up) return "Already have an account?"
       return "Dont't have account yet?"
     },
