@@ -12,30 +12,39 @@
             v-if="is_sign_up"
             class="input is-large panel-input"
             type="text"
-            name="username"
-            v-model="input.username"
-            placeholder="Email"
+            name="name"
+            v-model="name"
+            placeholder="Full name"
           />
           <input
             class="input is-large panel-input"
             type="text"
             name="email"
-            v-model="input.email"
+            v-model="email"
             placeholder="Email"
           />
           <input
             class="input is-large panel-input"
             type="password"
             name="password"
-            v-model="input.password"
+            v-model="password"
             placeholder="Password"
           />
+          <div
+            v-if="message"
+            class="alert"
+            :class="successful ? 'alert-success' : 'alert-danger'"
+            style="color: red"
+          >
+            {{ message }}
+          </div>
         </div>
+
         <div class="center-h">
           <button
             class="plate-button button is-large"
             type="button"
-            v-on:click="enter()"
+            v-on:click="enter"
           >
             {{ buttonValue() }}
           </button>
@@ -47,8 +56,9 @@
         </div>
         <div class="center-h panel-create-account">
           <h2>{{ backToValue() }}</h2>
-          <button v-on:click="is_sign_up = !is_sign_up">{{ changerValue() }}</button>
-          
+          <button v-on:click="is_sign_up = !is_sign_up; message = ''">
+            {{ changerValue() }}
+          </button>
         </div>
       </div>
     </div>
@@ -57,37 +67,61 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   name: "Login",
   data() {
     return {
-      input: {
-        email: "",
-        username: "",
-        password: "",
-      },
+      email: "",
+      name: "",
+      password: "",
+      errorMsg: "",
+      loading: false,
+      message: "",
       is_sign_up: false,
     };
   },
   methods: {
     enter() {
-        if(is_sign_up) {}
+      let data = {
+        email: this.email,
+        password: this.password,
+      };
+      let action = "auth/";
+      if (this.is_sign_up) {
+        data.name = this.name;
+        action += "register";
+      } else action += "login";
+      this.$store.dispatch(action, data).then(
+        () => {
+          this.$router.push("/");
+        },
+        (error) => {
+          this.loading = false;
+          this.message =
+            "*" +
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+            error.message ||
+            error.toString();
+        }
+      );
     },
     backToValue() {
-      console.log(process.env);
-      if (this.is_sign_up) return "Already have an account?"
-      return "Dont't have account yet?"
+      if (this.is_sign_up) return "Already have an account?";
+      return "Dont't have account yet?";
     },
     changerValue() {
-        if (this.is_sign_up) return "Log in!"
-        return "Create!"
+      // this.message = "";
+      if (this.is_sign_up) return "Log in!";
+      return "Create!";
     },
     buttonValue() {
-        if (this.is_sign_up) return "Sign up!"
-        return "Log in!"
-    }
+      if (this.is_sign_up) return "Sign up!";
+      return "Log in!";
+    },
   },
 };
 </script>
@@ -177,7 +211,7 @@ export default {
           font-family: Sansita;
           color: #474747;
           font-size: 15px;
-            transition-duration: 0.5s;
+          transition-duration: 0.5s;
           &:hover {
             color: #b6ff7c;
           }

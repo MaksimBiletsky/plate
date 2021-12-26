@@ -1,11 +1,16 @@
-from flask import Blueprint, request, jsonify, send_from_directory
-from flask_login import login_required, current_user, login_user, logout_user
+from datetime import datetime, timedelta
+import pdb
+
+import jwt
+
+from flask import Blueprint, request, jsonify, send_from_directory, current_app
 import os
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
 from .services.db import db
+from .services.token import token_required
 from .models import User, GaleryPhoto
 from flask_cors import CORS, cross_origin
 
@@ -38,37 +43,41 @@ def signup():
     
     db.session.add(new_user)
     db.session.commit()
- 
-    return jsonify({'success': 'Succesfully signed up!'})
-
+    return jsonify({'user':
+                        {
+                        'id': new_user.id, 
+                        'name': new_user.name,
+                        'email': new_user.email,
+                        'password': new_user.password
+                        }
+                    }), 201
+    
 @views.route('/api/login', methods=['POST'])
 @cross_origin()
 def login():
-    email = request.args.get('email')
-    password = request.args.get('password')
+    data = request.get_json()
+    # pdb.set_trace()
+    user = User.authenticate(**data)
 
-    user = User.query.filter_by(email=email).first()
-
-    if not user or not check_password_hash(user.password, password):
-        return jsonify({'error': 'Please check your login details and try again.'})
-    login_user(user)
-    return jsonify({'success': 'Succesfully loged in!'})
-
-@views.route('/api/logout')
-@cross_origin()
-def logout():
-    logout_user()
-    return jsonify({'success': 'Succesfully loged out!'})
-
+    if not user:
+        return jsonify({ 'message': 'Invalid credentials', 'authenticated': False }), 401
+    
+    token = jwt.encode({
+        'sub': user.email,
+        'iat':datetime.utcnow(),
+        'exp': datetime.utcnow() + timedelta(minutes=30)},
+        current_app.config['SECRET_KEY'])
+    return jsonify({ 'token': token })
 
 @views.route('/api/transfer')
 def style():
     pass
 
 @views.route('/api/gallery')
-@login_required
+@cross_origin()
+@token_required
 def gallery():
-    pass
+    return "ABBOBA"
 
 @views.route('/', defaults={'path': ''})
 @views.route('/<path:path>')
