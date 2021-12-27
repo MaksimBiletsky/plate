@@ -1,6 +1,7 @@
 from functools import wraps
 from flask import request, jsonify, current_app
 import jwt
+from datetime import datetime, timedelta
 
 from ..models import User
 
@@ -35,3 +36,11 @@ def token_required(f):
             return jsonify(invalid_msg), 401
 
     return _verify
+
+def create_token(user):
+    token = jwt.encode({
+        'sub': user.email,
+        'iat':datetime.utcnow(),
+        'exp': datetime.utcnow() + timedelta(minutes=30)},
+        current_app.config['SECRET_KEY'])
+    return jsonify({ 'accessToken': token })

@@ -10,7 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 from .services.db import db
-from .services.token import token_required
+from .services.token import token_required, create_token
 from .models import User, GaleryPhoto
 from flask_cors import CORS, cross_origin
 
@@ -35,39 +35,29 @@ def user():
 @views.route('/api/signup', methods=['POST'])
 @cross_origin()
 def signup():
-    email = request.args.get('email')
-    name = request.args.get('name')
-    password = request.args.get('password')
+    data = request.get_json()
     
+    email = data['email']
+    name = data['name']
+    password = data['password']
+
     new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'))
     
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({'user':
-                        {
-                        'id': new_user.id, 
-                        'name': new_user.name,
-                        'email': new_user.email,
-                        'password': new_user.password
-                        }
-                    }), 201
+
+    return create_token(new_user)
     
 @views.route('/api/login', methods=['POST'])
 @cross_origin()
 def login():
     data = request.get_json()
-    # pdb.set_trace()
     user = User.authenticate(**data)
 
     if not user:
         return jsonify({ 'message': 'Invalid credentials', 'authenticated': False }), 401
     
-    token = jwt.encode({
-        'sub': user.email,
-        'iat':datetime.utcnow(),
-        'exp': datetime.utcnow() + timedelta(minutes=30)},
-        current_app.config['SECRET_KEY'])
-    return jsonify({ 'token': token })
+    return create_token(user)
 
 @views.route('/api/transfer')
 def style():

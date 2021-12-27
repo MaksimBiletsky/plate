@@ -77,7 +77,6 @@ export default {
       name: "",
       password: "",
       errorMsg: "",
-      loading: false,
       message: "",
       is_sign_up: false,
     };
@@ -98,7 +97,6 @@ export default {
           this.$router.push("/");
         },
         (error) => {
-          this.loading = false;
           this.message =
             "*" +
               (error.response &&

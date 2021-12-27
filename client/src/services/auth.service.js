@@ -4,15 +4,13 @@ const API_URL = process.env.VUE_APP_BASE_SERVER_URL || process.env.BASE_URL;
 
 class AuthService {
   login(data) {
-    return axios
-      .post(API_URL + "login", data)
-      .then((response) => {
-        if (response.data.accessToken) {
-          localStorage.setItem("user", JSON.stringify(response.data));
-        }
+    return axios.post(API_URL + "login", data).then((response) => {
+      if (response.data.accessToken) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+      }
 
-        return response.data;
-      });
+      return response.data;
+    });
   }
 
   logout() {
@@ -20,7 +18,12 @@ class AuthService {
   }
 
   register(data) {
-    return axios.post(API_URL + "signup", data);
+    return axios.post(API_URL + "signup", data).then((response) => {
+      if (response.data.accessToken) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+      }
+      return response.data;
+    });
   }
 }
 
