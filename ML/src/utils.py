@@ -19,15 +19,3 @@ def get_img(src, img_size=False):
    if img_size != False:
        img = scipy.misc.imresize(img, img_size)
    return img
-
-def exists(p, msg):
-    assert os.path.exists(p), msg
-
-def list_files(in_path):
-    files = []
-    for (dirpath, dirnames, filenames) in os.walk(in_path):
-        files.extend(filenames)
-        break
-
-    return files
-
