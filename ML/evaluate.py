@@ -3,8 +3,8 @@ import sys
 import numpy as np, os
 import scipy.misc
 import tensorflow.compat.v1 as tf
-from src.utils import save_img, get_img
-import src.transform
+from utils import save_img, get_img
+import transform
 
 
 tf.disable_v2_behavior()
@@ -38,7 +38,7 @@ def transform_image(data_in, paths_out, model_dir, device_t='/cpu:0', batch_size
         
         save_img(paths_out[-1], _preds[0])
 
-def main(model_path, image_path, out_path):
+def set_style(model_path, image_path, out_path='transfered_images/'):
     out_name = os.path.basename(model_path) + '-' + os.path.basename(image_path)
     out_path = os.path.join(out_path, out_name)
 

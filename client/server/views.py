@@ -14,6 +14,8 @@ from .services.token import token_required, create_token
 from .models import User, GaleryPhoto
 from flask_cors import CORS, cross_origin
 
+from ../../ML/evaluate import set_style
+
 
 views = Blueprint('views', __name__, static_folder='../dist/')
 
@@ -64,7 +66,7 @@ def transfer():
         uploaded_file.save('server/loaded_images/'+uploaded_file.filename)
 
     # PLACE FOR TRANSFER FUNCTION
-    
+    set_style(style, uploaded_file)
 
     #SHOULD RETURN CREATED IMAGE FROM server/transfered_images
     return send_file('transfered_images/' + style + "-" + uploaded_file.filename)
