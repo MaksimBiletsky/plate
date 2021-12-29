@@ -11,7 +11,7 @@
 
 <script>
 export default {
-    props: ['checked', 'styleName'],
+    props: ['styleName'],
     data() {
     return {
       is_checked: "",

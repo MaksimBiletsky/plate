@@ -6,12 +6,18 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from dotenv import load_dotenv
 load_dotenv()
+from flask_cors import CORS, cross_origin
+
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('SQLALCHEMY_DATABASE_URI')
 app.config['SECRET_KEY'] = environ.get('SECRET_KEY')
+app.config['CORS_HEADERS'] = 'Content-Type'
+
+CORS(app)
+CORS(app, resources={r'/*': {'origins': '*'}},CORS_SUPPORTS_CREDENTIALS = True)
 
 
 from .views import views

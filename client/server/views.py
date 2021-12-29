@@ -3,7 +3,7 @@ import pdb
 
 import jwt
 
-from flask import Blueprint, request, jsonify, send_from_directory, current_app
+from flask import Blueprint, request, jsonify, send_from_directory, send_file
 import os
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -16,11 +16,6 @@ from flask_cors import CORS, cross_origin
 
 
 views = Blueprint('views', __name__, static_folder='../dist/')
-
-CORS(views)
-CORS(views, resources={r'/*': {'origins': '*'}},CORS_SUPPORTS_CREDENTIALS = True)
-# views.config['CORS_HEADERS'] = 'Content-Type'
-
 
 @views.route('/api')
 @cross_origin()
@@ -59,9 +54,21 @@ def login():
     
     return create_token(user)
 
-@views.route('/api/transfer')
-def style():
-    pass
+@views.route('/api/transfer', methods=['POST'])
+@cross_origin()
+def transfer():
+    style = request.form['style']
+    uploaded_file = request.files['file']
+    pdb.set_trace()
+    if uploaded_file.filename != '':
+        uploaded_file.save('server/loaded_images/'+uploaded_file.filename)
+
+    # PLACE FOR TRANSFER FUNCTION
+    
+
+    #SHOULD RETURN CREATED IMAGE FROM server/transfered_images
+    return send_file('transfered_images/' + style + "-" + uploaded_file.filename)
+    
 
 @views.route('/api/gallery')
 @cross_origin()

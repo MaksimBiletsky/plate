@@ -35,6 +35,38 @@
           />
         </div>
       </div>
+      <div class="transfer-block">
+        <div class="input-image">
+          <span v-if="no_style" style="color: red;">*Style can't be blank!</span>
+
+          <div id="preview" class="img-preview">
+            <img v-if="fileUrl" :src="fileUrl" />
+          </div>
+
+          <div class="plate-file file has-name">
+            <label class="file-label">
+              <input
+                class="file-input"
+                type="file"
+                accept="image/*"
+                @change="onFileChange($event)"
+              />
+              <span class="backgroud-file-input file-cta plate-input">
+                <span class="file-icon">
+                  <i class="fas fa-upload"></i>
+                </span>
+                <span class="file-label"> Load file… </span>
+              </span>
+              <span class="file-name" v-if="fileName">
+                {{ fileName }}
+              </span>
+            </label>
+          </div>
+        </div>
+        <div id="preview" class="img-preview">
+          <img v-if="resultImage" :src="resultImage" />
+        </div>
+      </div>
     </section>
   </div>
 </template>
@@ -48,24 +80,66 @@ export default {
   name: "Home",
   data() {
     return {
-      choosed_style: "",
-      allStyles: ["traditional", "old fashion", "modernism", "beautiful"],
+      no_style: false,
+      fileUrl: "",
+      fileName: "",
+      choosedStyle: "",
+      allStyles: ["la_muse", "rain_princess", "scream", "undie", "wave", "wreck", "cube", "matta"],
+      resultImage: "",
     };
   },
   methods: {
+    onFileChange(e) {
+      if (!this.choosedStyle) {
+        this.no_style = true;
+        return null
+      }
+      const file = e.target.files[0];
+      this.fileName = file.name;
+      this.fileUrl = URL.createObjectURL(file);
+
+      const API_URL = process.env.VUE_APP_BASE_SERVER_URL + "transfer";
+      let data = new FormData();
+      data.append("file", file);
+      data.append("style", this.choosedStyle);
+
+      let config = {
+        header: {
+          "Content-Type": "'multipart/form-data'",
+        },
+        responseType: "blob",
+      };
+      axios
+        .post(API_URL, data, config)
+        .then((response) => {
+          const urlCreator = window.URL || window.webkitURL;
+          this.resultImage = urlCreator.createObjectURL(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    transfer() {},
+    uploadFile(e) {
+      this.File = e.target.files;
+    },
+    dragFile(e) {
+      this.File = e.dataTransfer.files;
+    },
     goto(id) {
       document.getElementById(id).scrollIntoView({
         behavior: "smooth",
       });
     },
-    uncheckStyles(choosed_style) {
-      this.choosed_style = choosed_style;
-      console.log(this.choosed_style)
+    uncheckStyles(choosedStyle) {
+      this.choosedStyle = choosedStyle;
+      this.no_style = false;
       let container = document
         .querySelector("#styles")
         .querySelectorAll('input[type="checkbox"]');
       container.forEach((element) => {
-        if (element.className != choosed_style.replace(/ /g,'_').toLowerCase()) element.checked = false;
+        if (element.className != choosedStyle.replace(/ /g, "_").toLowerCase())
+          element.checked = false;
       });
     },
   },
@@ -146,6 +220,50 @@ section {
     margin-right: 100px;
     display: flex;
     justify-content: space-around;
+    padding: 50px 0;
+  }
+
+  .plate-input {
+    border: none;
+    color: #474747;
+    :hover {
+      background-color: #b6ff7c;
+    }
+  }
+  .backgroud-file-input {
+    background-color: #b6ff7c !important;
+  }
+  .img-preview {
+    width: 500px;
+    height: 500px;
+    border: solid 3px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 18px #888888;
+
+    img {
+      height: 100%;
+      width: 100%;
+      display: block;
+      object-fit: contain;
+      object-position: center;
+      padding: 5px;
+    }
+  }
+  .transfer-block {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  .plate-file {
+    font-family: "Poppins", sans-serif;
+    padding: 20px;
+    font-size: 16px;
+    font-weight: 700;
+    font-style: normal;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
   }
 }
 </style>

@@ -4,10 +4,6 @@ import authHeader from './auth-header';
 const API_URL = process.env.VUE_APP_BASE_SERVER_URL;
 
 class UserService {
-  getTransfer() {
-    return axios.get(API_URL + 'transfer');
-  }
-
   getGallery() {
     return axios.get(API_URL + 'gallery', { headers: authHeader() });
   }
