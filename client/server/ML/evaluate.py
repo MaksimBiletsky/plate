@@ -1,10 +1,11 @@
+import pdb
 import sys
 
 import numpy as np, os
 import scipy.misc
 import tensorflow.compat.v1 as tf
-from utils import save_img, get_img
-import transform
+from .src.utils import save_img, get_img
+from .src import transform
 
 
 tf.disable_v2_behavior()
@@ -38,8 +39,9 @@ def transform_image(data_in, paths_out, model_dir, device_t='/cpu:0', batch_size
         
         save_img(paths_out[-1], _preds[0])
 
-def set_style(model_path, image_path, out_path='transfered_images/'):
+def set_style(model_path, image_path, out_path='server/transfered_images/'):
+    # pdb.set_trace()
     out_name = os.path.basename(model_path) + '-' + os.path.basename(image_path)
     out_path = os.path.join(out_path, out_name)
 
-    transform_image([image_path], [out_path], model_path)
+    transform_image([image_path], [out_path], 'server/ML/checkpoints/'+model_path)

@@ -1,8 +1,8 @@
 import os, pdb
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 import numpy as np, scipy.misc 
-from optimize import optimize
-from utils import save_img, get_img
+from src.optimize import optimize
+from src.utils import save_img, get_img
 import evaluate
 
 CONTENT_WEIGHT = 7.5e0

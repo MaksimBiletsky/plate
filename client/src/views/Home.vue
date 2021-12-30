@@ -37,7 +37,7 @@
       </div>
       <div class="transfer-block">
         <div class="input-image">
-          <span v-if="no_style" style="color: red;">*Style can't be blank!</span>
+          <span v-if="no_style" style="color: red">*Style can't be blank!</span>
 
           <div id="preview" class="img-preview">
             <img v-if="fileUrl" :src="fileUrl" />
@@ -64,8 +64,24 @@
           </div>
         </div>
         <div id="preview" class="img-preview">
+          <img v-if="isLoading" src="../assets/common/loading.gif" />
           <img v-if="resultImage" :src="resultImage" />
         </div>
+      </div>
+      <div style="text-align: center">
+        <button
+          class="button is-large"
+          type="button"
+          style="
+            background-color: #b6ff7c !important;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-style: normal;
+          "
+          @click="transferImage()"
+        >
+          Transfer!
+        </button>
       </div>
     </section>
   </div>
@@ -81,26 +97,43 @@ export default {
   data() {
     return {
       no_style: false,
+      file: null,
       fileUrl: "",
       fileName: "",
       choosedStyle: "",
-      allStyles: ["la_muse", "rain_princess", "scream", "undie", "wave", "wreck", "cube", "matta"],
+      allStyles: [
+        "la_muse",
+        "rain_princess",
+        "scream",
+        "udnie",
+        "wave",
+        "wreck",
+        "cube",
+        "matta",
+      ],
       resultImage: "",
+      isLoading: false,
     };
   },
   methods: {
     onFileChange(e) {
+      this.resultImage = "";
+      this.file = e.target.files[0];
+      this.fileName = this.file.name;
+      this.fileUrl = URL.createObjectURL(this.file);
+    },
+    transferImage() {
       if (!this.choosedStyle) {
         this.no_style = true;
-        return null
+        return null;
       }
-      const file = e.target.files[0];
-      this.fileName = file.name;
-      this.fileUrl = URL.createObjectURL(file);
+      this.resultImage = "";
+      this.isLoading = true;
 
       const API_URL = process.env.VUE_APP_BASE_SERVER_URL + "transfer";
+
       let data = new FormData();
-      data.append("file", file);
+      data.append("file", this.file);
       data.append("style", this.choosedStyle);
 
       let config = {
@@ -114,12 +147,12 @@ export default {
         .then((response) => {
           const urlCreator = window.URL || window.webkitURL;
           this.resultImage = urlCreator.createObjectURL(response.data);
+          this.isLoading = false;
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    transfer() {},
     uploadFile(e) {
       this.File = e.target.files;
     },
@@ -193,7 +226,6 @@ section {
         font-size: 25px;
         font-weight: 700;
         font-style: normal;
-        font-weight: 700;
         text-align: center;
         text-decoration: none;
         display: inline-block;
